@@ -24,6 +24,7 @@ public class MyView extends View{
     Paint paint;
     Calendar calendar;
     int firstDayMargin;
+    int rowsAmount;
 
     public MyView(Context context, int days, Calendar calendar){
         super(context);
@@ -44,17 +45,18 @@ public class MyView extends View{
     private void initializeCalendar(Canvas canvas){
         paint = new Paint();
         paint.setColor(Color.WHITE);
+        setDayMargin();
         canvas.drawPaint(paint);       //background
         canvasHeight = canvas.getHeight() - topMargin;
         canvasWidth = canvas.getWidth();
-        fieldSize = canvasHeight/5;
+        if(days + firstDayMargin <= 35) rowsAmount = 5; else rowsAmount = 6; // table of calendar, how many rows we need for it to be beautiful ;)
+        fieldSize = canvasHeight/rowsAmount;
         leftMargin = (canvasWidth - 7*fieldSize)/3;
         topMargin = 20;
-        setDayMargin();
     }
 
     private void putCalendar(Canvas canvas, float leftMargin, float topMargin,float fieldSize){
-        for(int i = 0; i < 5; i++)
+        for(int i = 0; i < rowsAmount; i++)
             for (int j = 0; j < 7; j++)
                 drawCalendarField(canvas,leftMargin,topMargin,j,i,fieldSize);
     }
@@ -83,13 +85,13 @@ public class MyView extends View{
     private void drawRectInside(Canvas canvas, float leftMargin, float topMargin,int j, int i, float fieldSize){
         String text;
         String colorSequence;
-        if (7 * i + j + 1 <= days + firstDayMargin && 7 * i + j + 1>=firstDayMargin) {
+        if (7 * i + j + 1 <= days + firstDayMargin && 7 * i + j + 1 > firstDayMargin) {
             colorSequence = "#CD5C5C";
-            text = Integer.toString(7 * i + j + 1);
+            text = Integer.toString(7 * i + j + 1 - firstDayMargin);
         }
         else{
             colorSequence = "#FFFFFF";
-            text = Integer.toString((7 * i + j + 1)%days);
+            text = "";
         }
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.parseColor(colorSequence));
