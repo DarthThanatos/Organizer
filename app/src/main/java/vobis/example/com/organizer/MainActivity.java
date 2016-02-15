@@ -36,7 +36,7 @@ public class MainActivity extends ActionBarActivity {
         SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//dd/MM/yyyy
         Date now = new Date();
         String strDate = sdfDate.format(now);
-        hello.setText("Today is : " + strDate);
+        hello.setText("Today is : " + strDate + " March");
     }
 
     @Override
