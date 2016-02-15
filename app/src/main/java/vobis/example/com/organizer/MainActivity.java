@@ -15,20 +15,33 @@ import java.util.Date;
 
 public class MainActivity extends ActionBarActivity {
 
+    Calendar calendar;
+    int month;
+    int year;
+    View myView = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Calendar calendar = Calendar.getInstance();
+        calendar = Calendar.getInstance();
+        month =  Calendar.MONTH - 1;
+        year = getYear(calendar.getTime().toString());
         int days = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
         setHeadLine(days);
         setMainTheme(days);
     }
 
     public void setMainTheme(int days){
-        View myView = new MyView(this,days);
         LinearLayout mainLayout = (LinearLayout) findViewById(R.id.main_layout);
+        if(myView!=null)mainLayout.removeView(myView);
+        myView = new MyView(this,days,calendar);
         mainLayout.addView(myView);
+    }
+
+    public static Integer getYear(String date){
+        String[] dateParts = date.split(" ");
+        return Integer.parseInt(dateParts[5]);
     }
 
     public void setHeadLine(int days){
@@ -37,6 +50,36 @@ public class MainActivity extends ActionBarActivity {
         Date now = new Date();
         String strDate = sdfDate.format(now);
         hello.setText("Today is : " + strDate);
+    }
+
+    public void activatePrev(View view){
+        calendar.set(Calendar.MONTH,month - 1);
+        if(month == 0) {
+            calendar.set(Calendar.MONTH,11);
+            calendar.set(Calendar.YEAR,year - 1);
+            year --; month = 11;
+        }
+        else {
+            calendar.set(Calendar.MONTH,month - 1);
+            month --;
+        }
+        int days = calendar.getActualMaximum(Calendar.DATE);
+        setMainTheme(days);
+    }
+
+    public void activateNext(View view){
+        calendar.set(Calendar.MONTH,month + 1);
+        if(month ==11) {
+            calendar.set(Calendar.MONTH,0);
+            calendar.set(Calendar.YEAR,year +1);
+            year ++; month = 0;
+        }
+        else {
+            calendar.set(Calendar.MONTH,month + 1);
+            month ++;
+        }
+        int days = calendar.getActualMaximum(Calendar.DATE);
+        setMainTheme(days);
     }
 
     @Override
