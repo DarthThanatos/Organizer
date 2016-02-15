@@ -25,11 +25,13 @@ public class MyView extends View{
     Calendar calendar;
     int firstDayMargin;
     int rowsAmount;
+    Context context;
 
     public MyView(Context context, int days, Calendar calendar){
         super(context);
         this.days = days;
         this.calendar = calendar;
+        this.context=context;
     }
 
     @Override
@@ -120,10 +122,20 @@ public class MyView extends View{
     public boolean onTouchEvent(MotionEvent event) {
         vectorX = event.getX();
         vectorY = event.getY();
+        MainActivity parent = (MainActivity) context;
+
+        if(event.getAction() == MotionEvent.EDGE_RIGHT) {
+            parent.activateNext(this);
+        }
+        if(event.getAction() == MotionEvent.EDGE_LEFT) {
+            parent.activatePrev(this);
+        }
         if(event.getAction() == MotionEvent.ACTION_UP){
 
         }
         return super.onTouchEvent(event);
+
+
     }
 }
 
