@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -19,8 +20,8 @@ public class MyView extends View{
     int days;
     float canvasHeight;
     float canvasWidth;
-    float vectorX;
-    float vectorY;
+    float vectorX1;
+    float vectorX2;
     Paint paint;
     Calendar calendar;
     int firstDayMargin;
@@ -120,19 +121,27 @@ public class MyView extends View{
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        vectorX = event.getX();
-        vectorY = event.getY();
+        vectorX1 = event.getX();
+        vectorX2 = event.getY();
         MainActivity parent = (MainActivity) context;
 
-        if(event.getAction() == MotionEvent.EDGE_RIGHT) {
-            parent.activateNext(this);
-        }
-        if(event.getAction() == MotionEvent.EDGE_LEFT) {
-            parent.activatePrev(this);
-        }
-        if(event.getAction() == MotionEvent.ACTION_UP){
+        if(event.getAction() == MotionEvent.ACTION_DOWN) {
+            vectorX1 = event.getX();
 
         }
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            vectorX2 = event.getX();
+            if (vectorX1 - vectorX2>20) {
+                parent.activatePrev(this);
+                Toast.makeText(parent.getApplicationContext(), "It's alive!!!", Toast.LENGTH_SHORT).show();
+            }
+            if (vectorX1 - vectorX2<20) {
+                parent.activateNext(this);
+                Toast.makeText(parent.getApplicationContext(), "It's alive!!!", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+
         return super.onTouchEvent(event);
 
 
