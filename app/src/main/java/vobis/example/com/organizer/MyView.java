@@ -11,6 +11,8 @@ import android.widget.Toast;
 import java.util.Calendar;
 import java.util.HashMap;
 
+import static vobis.example.com.organizer.CalendarManager.getMonthAndYear;
+
 
 public class MyView extends View{
 
@@ -20,8 +22,8 @@ public class MyView extends View{
     int days;
     float canvasHeight;
     float canvasWidth;
-    float vectorX1;
-    float vectorX2;
+    float vectorX;
+    float vectorY;
     Paint paint;
     Calendar calendar;
     int firstDayMargin;
@@ -30,9 +32,9 @@ public class MyView extends View{
 
     public MyView(Context context, int days, Calendar calendar){
         super(context);
+        this.context = context;
         this.days = days;
         this.calendar = calendar;
-        this.context=context;
     }
 
     @Override
@@ -54,7 +56,7 @@ public class MyView extends View{
         canvasWidth = canvas.getWidth();
         if(days + firstDayMargin <= 35) rowsAmount = 5; else rowsAmount = 6; // table of calendar, how many rows we need for it to be beautiful ;)
         fieldSize = canvasHeight/rowsAmount;
-        leftMargin = (canvasWidth - 7*fieldSize)/3;
+        leftMargin = (canvasWidth - 7*fieldSize)/2;
         topMargin = 20;
     }
 
@@ -64,10 +66,6 @@ public class MyView extends View{
                 drawCalendarField(canvas,leftMargin,topMargin,j,i,fieldSize);
     }
 
-    public static String getMonthAndYear(String date){
-        String [] dateParts = date.split(" ");
-        return dateParts[1] + " " + dateParts[5];
-    }
 
     private void putDaysHeadline(Canvas canvas,float leftMargin,float topMargin,float fieldSize){
         String[] dayNames = {"Mon"," Tue"," Wed"," Thu"," Fri"," Sat"," San"};
@@ -119,32 +117,51 @@ public class MyView extends View{
         canvas.drawRect(leftMargin + j * fieldSize, topMargin + i * fieldSize, leftMargin + j * fieldSize + fieldSize,topMargin + i * fieldSize + fieldSize, paint);
     }
 
+    public float transformX(float x){
+        return (x - leftMargin)/(fieldSize);
+    }
+
+    public float transformY(float y){
+        return (y - topMargin)/(fieldSize);
+    }
+
+    public Boolean isInBorders(float x, float y){
+        x = transformX(x);
+        y =  transformY(y);
+        if(x >= 0 && x < 7)
+            if (y >= 0 && y < (float)(rowsAmount))
+                return true;
+        return false;
+    }
+
+    float lastPressedX;
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        vectorX1 = event.getX();
-        vectorX2 = event.getY();
+        vectorX = event.getX();
+        vectorY = event.getY();
         MainActivity parent = (MainActivity) context;
-
-        if(event.getAction() == MotionEvent.ACTION_DOWN) {
-            vectorX1 = event.getX();
-
-        }
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-            vectorX2 = event.getX();
-            if (vectorX1 - vectorX2>20) {
-                parent.activatePrev(this);
-                Toast.makeText(parent.getApplicationContext(), "It's alive!!!", Toast.LENGTH_SHORT).show();
+        if(event.getAction() == MotionEvent.ACTION_DOWN){
+            if( isInBorders(vectorX,vectorY)){
+                int j = (int)(transformX(vectorX)); int i = (int)(transformY(vectorY));
+                int dayOfMonth = i * 7 + j + 1 - firstDayMargin;
+                if (dayOfMonth > 0 && dayOfMonth <= days) {
+                    parent.createChild(dayOfMonth);
+                }
+                return false; // it is a default logical flag, indicating that the app does not detect ACTION_UP event
             }
-            if (vectorX1 - vectorX2<20) {
-                parent.activateNext(this);
-                Toast.makeText(parent.getApplicationContext(), "It's alive!!!", Toast.LENGTH_SHORT).show();
+            else{
+                lastPressedX = vectorX;
+                return true;// here you tell the app that it can detect ACTION_UP event
             }
         }
-
-
-        return super.onTouchEvent(event);
-
-
+        else {
+            if(event.getAction() == MotionEvent.ACTION_UP){
+                if(vectorX - lastPressedX > 0) parent.activatePrev(null);
+                else parent.activateNext(null);
+            }
+            return false; // this assignment tells the app that swiping move is over and another "cycle" has to be activated to detect ACTION_UP event
+        }
     }
 }
 

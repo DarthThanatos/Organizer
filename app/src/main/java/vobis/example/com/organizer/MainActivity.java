@@ -1,5 +1,6 @@
 package vobis.example.com.organizer;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -7,10 +8,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+
+import static vobis.example.com.organizer.CalendarManager.getMonthAndYear;
+import static vobis.example.com.organizer.CalendarManager.getYear;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -39,14 +44,11 @@ public class MainActivity extends ActionBarActivity {
         mainLayout.addView(myView);
     }
 
-    public static Integer getYear(String date){
-        String[] dateParts = date.split(" ");
-        return Integer.parseInt(dateParts[5]);
-    }
+
 
     public void setHeadLine(int days){
         TextView hello = (TextView) findViewById(R.id.text);
-        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//dd/MM/yyyy
+        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");//dd/MM/yyyy
         Date now = new Date();
         String strDate = sdfDate.format(now);
         hello.setText("Today is : " + strDate);
@@ -87,6 +89,14 @@ public class MainActivity extends ActionBarActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    public void createChild(int dayOfMonth){
+        Toast.makeText(getApplicationContext(),dayOfMonth + "",Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, Browser.class);
+        String message = dayOfMonth + " " + getMonthAndYear(calendar.getTime().toString());
+        intent.putExtra("date",message);
+        startActivity(intent);
     }
 
     @Override
