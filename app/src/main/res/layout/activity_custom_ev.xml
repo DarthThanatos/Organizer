@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"/>
+    <TextView
+        android:text="Create your own event, fill gaps below and press add button"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"/>
+
+    <EditText
+        android:id="@+id/name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="Input the the name of the event"
+        android:gravity="center_horizontal"
+        android:ellipsize="start"/>
+    <EditText
+        android:id="@+id/desc"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="Input the the description of the event"
+        android:gravity="center_horizontal"
+        android:ellipsize="start"/>
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="add"
+            android:onClick="addEvent"/>
+    </RelativeLayout>
+</LinearLayout>

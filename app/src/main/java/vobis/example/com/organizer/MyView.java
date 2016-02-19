@@ -1,6 +1,7 @@
 package vobis.example.com.organizer;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -12,6 +13,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 
 import static vobis.example.com.organizer.CalendarManager.getMonthAndYear;
+import static vobis.example.com.organizer.CalendarManager.parseDate;
 
 
 public class MyView extends View{
@@ -29,10 +31,13 @@ public class MyView extends View{
     int firstDayMargin;
     int rowsAmount;
     Context context;
+    int fontSize = 13;
+    SharedPreferences calendarColors;
 
     public MyView(Context context, int days, Calendar calendar){
         super(context);
         this.context = context;
+        calendarColors = context.getSharedPreferences("calendar", context.MODE_PRIVATE);
         this.days = days;
         this.calendar = calendar;
     }
@@ -44,6 +49,7 @@ public class MyView extends View{
         initializeCalendar(canvas);
         putDaysHeadline(canvas, leftMargin, topMargin, fieldSize);
         putCalendar(canvas,leftMargin,topMargin,fieldSize);
+        putBrowserButton(canvas);
         invalidate();
     }
 
@@ -66,6 +72,20 @@ public class MyView extends View{
                 drawCalendarField(canvas,leftMargin,topMargin,j,i,fieldSize);
     }
 
+    float buttonHeight;
+    float buttonWidth;
+
+    private void putBrowserButton(Canvas canvas){
+        buttonHeight = 55;
+        buttonWidth = (canvasWidth - 7*canvasHeight/5)/2 - 10; //bigger
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.parseColor("#CD4000"));
+        canvas.drawRect(0, 0, buttonWidth, buttonHeight, paint);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setColor(Color.parseColor("#000000"));
+        canvas.drawRect(0, 0, buttonWidth, buttonHeight, paint);
+        putText(canvas, 15, fontSize + (buttonHeight - fontSize)/2 - 2, "Browser");
+    }
 
     private void putDaysHeadline(Canvas canvas,float leftMargin,float topMargin,float fieldSize){
         String[] dayNames = {"Mon"," Tue"," Wed"," Thu"," Fri"," Sat"," San"};
@@ -79,7 +99,7 @@ public class MyView extends View{
 
     private void putText(Canvas canvas, float x, float y,  String text){
         paint.setColor(Color.BLACK);
-        paint.setTextSize(13);
+        paint.setTextSize(fontSize);
         canvas.drawText(text, x + 2, y - 2, paint);
     }
 
@@ -87,8 +107,10 @@ public class MyView extends View{
         String text;
         String colorSequence;
         if (7 * i + j + 1 <= days + firstDayMargin && 7 * i + j + 1 > firstDayMargin) {
-            colorSequence = "#CD5C5C";
             text = Integer.toString(7 * i + j + 1 - firstDayMargin);
+            String eventColor = calendarColors.getString(parseDate(text +" " + getMonthAndYear(calendar.getTime().toString())),"");
+            if (! eventColor.equals("")) colorSequence = eventColor;
+            else colorSequence = "#CD5C5C";
         }
         else{
             colorSequence = "#FFFFFF";
@@ -134,6 +156,13 @@ public class MyView extends View{
         return false;
     }
 
+    public Boolean isInBordersOfBrowser(float x, float y){
+        if(x >= 0 && x < buttonWidth)
+            if (y >= 0 && y < buttonHeight)
+                return true;
+        return false;
+    }
+
     float lastPressedX;
 
     @Override
@@ -151,8 +180,14 @@ public class MyView extends View{
                 return false; // it is a default logical flag, indicating that the app does not detect ACTION_UP event
             }
             else{
-                lastPressedX = vectorX;
-                return true;// here you tell the app that it can detect ACTION_UP event
+                if(isInBordersOfBrowser(vectorX,vectorY)){
+                    parent.activateGlobalBrowser();
+                    return false;
+                }
+                else{
+                    lastPressedX = vectorX;
+                    return true;// here you tell the app that it can detect ACTION_UP event
+                }
             }
         }
         else {

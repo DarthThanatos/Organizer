@@ -93,9 +93,14 @@ public class MainActivity extends ActionBarActivity {
 
     public void createChild(int dayOfMonth){
         Toast.makeText(getApplicationContext(),dayOfMonth + "",Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, Browser.class);
+        Intent intent = new Intent(this, EventsByDateManager.class);
         String message = dayOfMonth + " " + getMonthAndYear(calendar.getTime().toString());
         intent.putExtra("date",message);
+        startActivity(intent);
+    }
+
+    public void activateGlobalBrowser(){
+        Intent intent = new Intent(this, Browser.class);
         startActivity(intent);
     }
 

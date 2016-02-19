@@ -7,9 +7,12 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -17,11 +20,14 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import static vobis.example.com.organizer.CalendarManager.parseDate;
 
-public class Browser extends ActionBarActivity {
-    String key = "Browser";
+
+public class Subscriber extends EventsByDateManager {
+
+    String key = "Subscriber";
     String dayDate;
     String keyOfEvent;
     Context context = this;
@@ -31,9 +37,10 @@ public class Browser extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subscriber);
         setHeadLine();
-        Connectic connectic = new Connectic(this,key,"browser");
-        String link = "https://raw.githubusercontent.com/DarthThanatos/OrganizerDB/master/DB%20type-event-date/folderInfo.txt";
-        if(connectic.checkInternetConenction()) {
+        dayDate =  parseDate(getDate());
+        Connectic connectic = new Connectic(this,key,dayDate);
+        String link = "https://raw.githubusercontent.com/DarthThanatos/OrganizerDB/master/DB%20date-type-event/" + dayDate+ "/folderInfo.txt";
+          if(connectic.checkInternetConenction()) {
             connectic.downloadDatabase(link);
         }
     }
@@ -43,7 +50,7 @@ public class Browser extends ActionBarActivity {
 
     public void setView() {
         final SharedPreferences memory = getSharedPreferences(key, MODE_PRIVATE);
-        String eventsFile = memory.getString("browser", "");
+        String eventsFile = memory.getString(dayDate, "");
         myAdapter.addToAdapter(eventsFile);
     }
 
@@ -51,15 +58,18 @@ public class Browser extends ActionBarActivity {
 
         private ArrayList mData = new ArrayList();
         private LayoutInflater mInflater;
+        boolean addCustEv;
 
-        public MyCustomAdapter() {
+        public MyCustomAdapter(boolean addCustEv) {
             mInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            this.addCustEv = addCustEv;
+            if(addCustEv)addItem("Custom Event");
         }
 
         public void addToAdapter(String eventsFile){
             mData = new ArrayList();
+            if(addCustEv)addItem("Custom Event");
             String[] events = eventsFile.split("\n");
-            Arrays.sort(events);
             ArrayList<String> eventsList = new ArrayList<String>();
             eventsList.addAll(Arrays.asList(events));
             for (String event : eventsList) addItem(event);
@@ -95,7 +105,7 @@ public class Browser extends ActionBarActivity {
             System.out.println("getView " + position + " " + convertView);
             ViewHolder holder = null;
             if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.activity_browser_elem, null);
+                convertView = mInflater.inflate(R.layout.item1, null);
                 holder = new ViewHolder();
                 holder.textView = (TextView)convertView.findViewById(R.id.text);
                 convertView.setTag(holder);
@@ -116,21 +126,27 @@ public class Browser extends ActionBarActivity {
 
     public void setHeadLine(){
         TextView hello = (TextView) findViewById(R.id.date_exposure);
-        hello.setText("Select category");
+        hello.setText("Today is : " + getDate());
         list = (ListView) findViewById(R.id.listView);
-        myAdapter = new MyCustomAdapter();
+        myAdapter = new MyCustomAdapter(true);
         if(list != null) {
             list.setAdapter(myAdapter);
             list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    String event = ((String) list.getItemAtPosition(position));
-                    Toast.makeText(context, event, Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(context, ChildOfBrowser.class);
-                    intent.putExtra("type", event);
+                    String event = (String) list.getItemAtPosition(position);
+                    Intent intent;
+                    if(! event.equals("Custom Event")) {
+                        intent = new Intent(context, ChildOfSubsriber.class);
+                        intent.putExtra("type", event);
+                    }
+                    else intent = new Intent(context, CustomEvent.class);
                     startActivity(intent);
                 }
             });
         }
+
     }
+
+
 }

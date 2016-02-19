@@ -20,10 +20,83 @@
         </activity>
         <activity
             android:name=".Browser"
+            android:screenOrientation="landscape"
             android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".EventsByDateManager"
+            android:screenOrientation="landscape"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".LocalDBGuide"
+            android:screenOrientation="landscape"
+            android:parentActivityName=".EventsByDateManager" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".EventsByDateManager" />
+        </activity>
+        <activity
+            android:name=".Subscriber"
+            android:screenOrientation="landscape"
+            android:parentActivityName=".EventsByDateManager" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".EventsByDateManager" />
+        </activity>
+        <activity
+            android:name=".ChildOfSubsriber"
+            android:screenOrientation="landscape"
+            android:parentActivityName=".Subscriber" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Subscriber" />
+        </activity>
+        <activity
+            android:name=".EventDescription"
+            android:screenOrientation="landscape"
+            android:parentActivityName=".ChildOfSubsriber" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ChildOfSubsriber" />
+        </activity>
+        <activity
+            android:name=".CustomEvent"
+            android:screenOrientation="landscape"
+            android:parentActivityName=".Subscriber" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Subscriber" />
+        </activity>
+        <activity
+            android:name=".ChildOfBrowser"
+            android:screenOrientation="landscape"
+            android:parentActivityName=".Browser" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Browser" />
+        </activity>
+        <activity
+            android:name=".Browser_EventDesc"
+            android:screenOrientation="landscape"
+            android:parentActivityName=".ChildOfBrowser" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ChildOfBrowser" />
+        </activity>
+        <activity
+            android:name=".StoredEvents"
+            android:screenOrientation="landscape"
+            android:parentActivityName=".LocalDBGuide" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".LocalDBGuide" />
         </activity>
     </application>
 
