@@ -21,7 +21,7 @@ public class EventDescription extends ChildOfSubsriber {
         setContentView(R.layout.activity_ev_desc);
         initView();
         Connectic connectic = new Connectic(this,key,dayDate+getType()+getName());
-        String link = "https://raw.githubusercontent.com/DarthThanatos/OrganizerDB/master/DB%20date-type-event/" + dayDate + "/" + getType() + "/" + getName() + ".txt";
+        String link = "https://raw.githubusercontent.com/DarthThanatos/OrganizerDB/master/DB%20date-type-event/" + dayDate + "/" + getType() + "/" + getName();
         //Toast.makeText(this,dayDate+getType()+getName(),Toast.LENGTH_LONG).show();
         if(connectic.checkInternetConenction()) {
             connectic.downloadDatabase(link);
