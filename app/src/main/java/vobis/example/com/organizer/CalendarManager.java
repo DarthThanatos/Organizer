@@ -29,4 +29,15 @@ public class CalendarManager {
             return null;
         }
     }
+
+    public static boolean isDateValid(String date){
+        try {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            df.setLenient(false);
+            df.parse(date);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

@@ -125,7 +125,6 @@ public class Browser extends ActionBarActivity {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     String event = ((String) list.getItemAtPosition(position));
-                    Toast.makeText(context, event, Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(context, ChildOfBrowser.class);
                     intent.putExtra("type", event);
                     startActivity(intent);

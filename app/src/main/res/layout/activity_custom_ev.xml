@@ -7,35 +7,50 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"/>
-    <TextView
-        android:text="Create your own event, fill gaps below and press add button"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"/>
-
     <EditText
         android:id="@+id/name"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:hint="Input the the name of the event"
-        android:gravity="center_horizontal"
+        android:gravity="center"
         android:ellipsize="start"/>
     <EditText
         android:id="@+id/desc"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:hint="Input the the description of the event"
-        android:gravity="center_horizontal"
+        android:gravity="center"
         android:ellipsize="start"/>
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+
         <Button
             android:id="@+id/add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
             android:text="add"
+            android:layout_alignParentRight="true"
             android:onClick="addEvent"/>
+        <TextView
+            android:id="@+id/timer_info"
+            android:text="Select an hour when you want\n to be notified about this event"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"/>
+        <Button
+            android:id="@+id/notifier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="Set notifier"
+            android:onClick="setAlert"/>
     </RelativeLayout>
+    <TimePicker
+        android:id="@+id/timePicker1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"/>
 </LinearLayout>
