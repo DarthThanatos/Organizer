@@ -21,8 +21,8 @@ public class EventDescription extends ChildOfSubsriber {
         setContentView(R.layout.activity_ev_desc);
         initView();
         Connectic connectic = new Connectic(this,key,dayDate+getType()+getName());
-        String link = "https://raw.githubusercontent.com/DarthThanatos/OrganizerDB/master/DB%20date-type-event/" + dayDate + "/" + getType() + "/" + getName();
-
+        String link = "https://raw.githubusercontent.com/DarthThanatos/OrganizerDB/master/DB%20date-type-event/" + dayDate + "/" + getType() + "/" + getName() + ".txt";
+        //Toast.makeText(this,dayDate+getType()+getName(),Toast.LENGTH_LONG).show();
         if(connectic.checkInternetConenction()) {
             connectic.downloadDatabase(link);
         }
@@ -45,6 +45,7 @@ public class EventDescription extends ChildOfSubsriber {
         TextView desc = (TextView) findViewById(R.id.desc);
         final SharedPreferences memory = getSharedPreferences(key, MODE_PRIVATE);
         String eventsFile = memory.getString(dayDate+getType()+getName(),"");
+        //Toast.makeText(this,dayDate+getType()+getName(),Toast.LENGTH_LONG).show();
         desc.setText("Description of the event: " + eventsFile);
         eventDesc = eventsFile;
     }
@@ -59,7 +60,7 @@ public class EventDescription extends ChildOfSubsriber {
         editor.putString(parseDate(getDate()), typesAtDate.replace(getType() + "\n", "") + getType() + "\n");
         String eventsInType = memory.getString(parseDate(getDate()) + getType(), "");
         editor.putString(parseDate(getDate()) +getType(),eventsInType.replace(getName() + "\n","") + getName() + "\n");
-        editor.putString(parseDate(getDate())+getType() + getName(),eventDesc);
+        editor.putString(parseDate(getDate())+getType() + getName().replace(".txt",""),eventDesc);
         editor.commit();
         final SharedPreferences calendar = getSharedPreferences("calendar", MODE_PRIVATE);
         final SharedPreferences.Editor calendarEditor = calendar.edit();

@@ -124,7 +124,7 @@ public class Connectic {
             connec.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == android.net.NetworkInfo.State.CONNECTING ||
             connec.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == android.net.NetworkInfo.State.CONNECTING ||
             connec.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == android.net.NetworkInfo.State.CONNECTED ) {
-                if(subscriber != null) Toast.makeText(subscriber, " Connected ", Toast.LENGTH_LONG).show();
+                if(subscriber != null) Toast.makeText(subscriber, " Connected ", Toast.LENGTH_SHORT).show();
                 else Toast.makeText(browser, " Connected ", Toast.LENGTH_LONG).show();
                 return true;
         }else if (

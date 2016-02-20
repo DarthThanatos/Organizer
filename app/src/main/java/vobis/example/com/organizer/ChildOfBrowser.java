@@ -64,7 +64,6 @@ public class ChildOfBrowser extends Browser {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     String event = ((String) list.getItemAtPosition(position)).replace(".txt","");
-                    Toast.makeText(context, event, Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(context, Browser_EventDesc.class);
                     String name = event.split(" ")[0];
                     String date = event.split(" ")[1];

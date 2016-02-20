@@ -19,8 +19,10 @@ public class Browser_EventDesc extends ChildOfBrowser{
         String date =  getIntent().getStringExtra("date");
         String name = getIntent().getStringExtra("name");
         String event = getIntent().getStringExtra("event");
-        Connectic connectic = new Connectic(this,key,dayDate+getType()+name+date);
-        String link = "https://github.com/DarthThanatos/OrganizerDB/blob/master/DB%20type-event-date/"+getType().replace(" ","%20")+"/" + event + ".txt";
+        Connectic connectic = new Connectic(this,key,getType()+name+date);
+        Toast.makeText(this,getType()+name+date,Toast.LENGTH_LONG).show();
+        String link = "https://raw.githubusercontent.com/DarthThanatos/OrganizerDB/master/DB%20type-event-date/"+getType().replace(" ","%20")+"/" + event.replace(" ","%20")+".txt";
+        //Toast.makeText(this,link,Toast.LENGTH_LONG).show();
         if(connectic.checkInternetConenction()) {
             connectic.downloadDatabase(link);
         }
@@ -32,7 +34,8 @@ public class Browser_EventDesc extends ChildOfBrowser{
         String name = getIntent().getStringExtra("name");
         String date =  getIntent().getStringExtra("date");
         final SharedPreferences memory = getSharedPreferences(key, MODE_PRIVATE);
-        String eventsFile = memory.getString(dayDate+getType()+name+date,"");
+        String eventsFile = memory.getString(getType()+name+date,"");
+        Toast.makeText(this,getType()+name+date,Toast.LENGTH_LONG).show();
         desc.setText("Description of the event: " + eventsFile);
         eventDesc = eventsFile;
     }
