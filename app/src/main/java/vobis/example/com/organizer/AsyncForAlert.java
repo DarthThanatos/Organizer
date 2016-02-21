@@ -75,6 +75,8 @@ public class AsyncForAlert extends AsyncTask<Void,Integer,String> {
             else
                 try {
                     wait(end - start);
+                    exc = false;
+                    System.out.println("waiting");
                     //Toast.makeText(context,"Working",Toast.LENGTH_SHORT).show();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
