@@ -65,7 +65,8 @@ public class DBSecondLevel extends BaseExpandableListAdapter{
         TextView textView = (TextView)convertView.findViewById(R.id.second_child_item);
         textView.setTypeface(null, Typeface.BOLD);
         textView.setText(title);
-        if(title != null && !title.equals("")) textView.setBackgroundColor(Color.parseColor(color.colorsMap.get(title.replace(".txt", ""))));
+        if(title != null && !title.equals(""))
+            textView.setBackgroundColor(Color.parseColor(color.colorsMap.get(title.replace(".txt", ""))));
         return convertView;
     }
 
@@ -84,8 +85,6 @@ public class DBSecondLevel extends BaseExpandableListAdapter{
         return convertView;
     }
 
-
-
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
@@ -95,5 +94,6 @@ public class DBSecondLevel extends BaseExpandableListAdapter{
     public boolean hasStableIds() {
         return false;
     }
+
 }
 

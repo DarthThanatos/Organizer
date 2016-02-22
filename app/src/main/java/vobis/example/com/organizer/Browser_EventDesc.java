@@ -1,6 +1,9 @@
 package vobis.example.com.organizer;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -8,10 +11,12 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import static vobis.example.com.organizer.CalendarManager.curBefEvBase;
 import static vobis.example.com.organizer.CalendarManager.parseDate;
 
 public class Browser_EventDesc extends ChildOfBrowser{
@@ -132,17 +137,13 @@ public class Browser_EventDesc extends ChildOfBrowser{
         String name = getIntent().getStringExtra("name");
         String alertDate = date + " " + parsedHour + ":" + parsedMinute;
         if(!name.equals("")){
-            if (currentBeforeEvent()){
+            if (curBefEvBase(alertDate)){
                 final AsyncForAlert async = new AsyncForAlert(Browser_EventDesc.this,alertDate,name.replace(".txt",""),eventDesc);
                 SharedPreferences memory = getSharedPreferences("Notifiers", MODE_PRIVATE);
                 SharedPreferences.Editor editor = memory.edit();
                 boolean alreadyCreated = memory.getBoolean(alertDate, false);
                 if(!alreadyCreated) {
-                    runOnUiThread(new Runnable(){
-                        public void run(){
-                            async.execute();
-                        }
-                    });
+                    setAlarm(alertDate);
                     editor.putBoolean(alertDate, true);
                     editor.commit();
                     Toast.makeText(context,"Created notification",Toast.LENGTH_SHORT).show();
@@ -152,5 +153,24 @@ public class Browser_EventDesc extends ChildOfBrowser{
             else Toast.makeText(this, "Cannot set this notifier, date already passed",Toast.LENGTH_LONG).show();
         }
         else Toast.makeText(this, "Fill the name gap!",Toast.LENGTH_LONG).show();
+    }
+
+    public void setAlarm(String dateInString){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        try {
+            Date date = sdf.parse(dateInString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        String nameOFEvent = getIntent().getStringExtra("name").replace(".txt","");
+        Calendar calendar = sdf.getCalendar();
+        Intent myIntent = new Intent(Browser_EventDesc.this, MyReceiver.class);
+        myIntent.putExtra("type",getType());
+        myIntent.putExtra("name", nameOFEvent);
+        myIntent.putExtra("date", dateInString);
+        final int _id = (int) System.currentTimeMillis();
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(Browser_EventDesc.this, _id, myIntent, 0);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
     }
 }

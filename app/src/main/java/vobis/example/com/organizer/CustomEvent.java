@@ -1,7 +1,10 @@
 package vobis.example.com.organizer;
 
+import android.app.AlarmManager;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import static vobis.example.com.organizer.CalendarManager.curBefEvBase;
 import static vobis.example.com.organizer.CalendarManager.parseDate;
 
 public class CustomEvent extends Subscriber{
@@ -99,18 +103,14 @@ public class CustomEvent extends Subscriber{
         String parsedHour = parseTimeUnit(timePicker1.getCurrentHour());
         String alertDate = parseDate(getDate()) + " " + parsedHour + ":" + parsedMinute;
         if(!nameOFEvent.equals("")){
-            if (currentBeforeEvent()){
+            if (curBefEvBase(alertDate)){
                 SharedPreferences memory = getSharedPreferences("Notifiers", MODE_PRIVATE);
                 SharedPreferences.Editor editor = memory.edit();
                 boolean alreadyCreated = memory.getBoolean(alertDate, false);
                 Toast.makeText(this, "You may subscribe this event",Toast.LENGTH_LONG).show();
                 final AsyncForAlert async = new AsyncForAlert(CustomEvent.this,alertDate,nameOFEvent,descOfEvent);
                 if(!alreadyCreated){
-                    runOnUiThread(new Runnable(){
-                        public void run(){
-                            async.execute();
-                        }
-                    });
+                    setAlarm(alertDate);
                     editor.putBoolean(alertDate, true);
                     editor.commit();
                     Toast.makeText(context,"Created notification",Toast.LENGTH_SHORT).show();
@@ -122,16 +122,26 @@ public class CustomEvent extends Subscriber{
         else Toast.makeText(this, "Fill the name gap!",Toast.LENGTH_LONG).show();
     }
 
-    public boolean currentBeforeEvent(){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Calendar c = Calendar.getInstance();
-        try{
-            c.setTime(sdf.parse(parseDate(getDate())));
-            c.add(Calendar.DATE, 1);  // number of days to add
-            Date currentDate = new Date();
-            if(!currentDate.after( sdf.parse(sdf.format(c.getTime())))) return true;
-            else return false;
-        }catch(Exception e){};
-        return false;
+
+
+    public void setAlarm(String dateInString){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        try {
+            Date date = sdf.parse(dateInString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        String nameOFEvent = name.getText().toString();
+        Calendar calendar = sdf.getCalendar();
+        Intent myIntent = new Intent(CustomEvent.this, MyReceiver.class);
+
+        myIntent.putExtra("name",nameOFEvent);
+        myIntent.putExtra("type","Custom Event");
+        myIntent.putExtra("date",dateInString);
+        final int _id = (int) System.currentTimeMillis();
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, _id, myIntent, 0);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
     }
+
 }

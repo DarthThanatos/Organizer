@@ -44,7 +44,8 @@ public class LocalDBGuide extends ActionBarActivity {
             eventsNames.addAll(Arrays.asList(memory.getString(date + type, "").split("\n")));
             firstLvl.put(type, eventsNames);
         }
-        dbContent.setAdapter(new DBSecondLevel(this, Keys, firstLvl));
+        if(!Keys.get(0).equals("")) //it is actually the empty list
+            dbContent.setAdapter(new DBSecondLevel(this, Keys, firstLvl));
         dbContent.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {

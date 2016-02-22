@@ -1,7 +1,10 @@
 package vobis.example.com.organizer;
 
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -11,10 +14,12 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import static vobis.example.com.organizer.CalendarManager.curBefEvBase;
 import static vobis.example.com.organizer.CalendarManager.parseDate;
 
 public class EventDescription extends ChildOfSubsriber {
@@ -125,18 +130,14 @@ public class EventDescription extends ChildOfSubsriber {
         String alertDate = parseDate(getDate()) + " " + parsedHour + ":" + parsedMinute;
         Toast.makeText(this,alertDate,Toast.LENGTH_SHORT).show();
         if(!getName().equals("")){
-            if (currentBeforeEvent()){
+            if (curBefEvBase(alertDate)){
                 SharedPreferences memory = getSharedPreferences("Notifiers", MODE_PRIVATE);
                 SharedPreferences.Editor editor = memory.edit();
                 boolean alreadyCreated = memory.getBoolean(alertDate, false);
                 Toast.makeText(this, "You may subscribe this event",Toast.LENGTH_LONG).show();
                 final AsyncForAlert async = new AsyncForAlert(EventDescription.this,alertDate,getName().replace(".txt",""),eventDesc);
                 if(!alreadyCreated){
-                    runOnUiThread(new Runnable() {
-                        public void run() {
-                            async.execute();
-                        }
-                    });
+                    setAlarm(alertDate);
                     editor.putBoolean(alertDate, true);
                     editor.commit();
                     Toast.makeText(context,"Created notification",Toast.LENGTH_SHORT).show();
@@ -157,7 +158,26 @@ public class EventDescription extends ChildOfSubsriber {
             Date currentDate = new Date();
             if(!currentDate.after( sdf.parse(sdf.format(c.getTime())))) return true;
             else return false;
-        }catch(Exception e){};
+        }catch(Exception e){}
         return false;
+    }
+
+    public void setAlarm(String dateInString){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        try {
+            Date date = sdf.parse(dateInString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        String nameOFEvent = getIntent().getStringExtra("name").replace(".txt","");
+        Calendar calendar = sdf.getCalendar();
+        Intent myIntent = new Intent(EventDescription.this, MyReceiver.class);
+        myIntent.putExtra("type",getType());
+        myIntent.putExtra("name", nameOFEvent);
+        myIntent.putExtra("date", dateInString);
+        final int _id = (int) System.currentTimeMillis();
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(EventDescription.this, _id, myIntent, 0);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
     }
 }

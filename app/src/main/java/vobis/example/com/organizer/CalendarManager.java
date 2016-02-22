@@ -2,6 +2,7 @@ package vobis.example.com.organizer;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -28,6 +29,29 @@ public class CalendarManager {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public boolean currentBeforeEvent(String dateInString){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar c = Calendar.getInstance();
+        try{
+            c.setTime(sdf.parse(parseDate(dateInString)));
+            c.add(Calendar.DATE, 1);  // number of days to add
+            Date currentDate = new Date();
+            if(!currentDate.after( sdf.parse(sdf.format(c.getTime())))) return true;
+            else return false;
+        }catch(Exception e){};
+        return false;
+    }
+
+    public static boolean curBefEvBase(String evDate){
+        try{
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            Date date = sdf.parse(evDate);
+            Date currentDate = new Date();
+            if(!currentDate.after( date) ) return true;
+        }catch(Exception e){};
+        return false;
     }
 
     public static boolean isDateValid(String date){
